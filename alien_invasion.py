@@ -17,7 +17,9 @@ class AlienInvasion:
         """Initlize the game, and create game resources."""
         pygame.init()
         self.settings = Settings()
-        self.screen = pygame.display.set_mode((0,0), pygame.FULLSCREEN)
+        self.screen = pygame.display.set_mode((
+            self.settings.screen_width, self.settings.screen_height
+        ))
         self.settings.screen_width = self.screen.get_rect().width
         self.settings.screen_height = self.screen.get_rect().height
 
@@ -123,7 +125,7 @@ class AlienInvasion:
     def _check_bullet_alien_collisions(self):
         """respond to bullet-alien collisions"""
         collisions = pygame.sprite.groupcollide(
-            self.bullets, self.aliens, True, True
+            self.bullets, self.aliens, False, True
         )
 
         if collisions:
@@ -184,7 +186,7 @@ class AlienInvasion:
         # determine the number of rows that fit on the screen
         ship_height = self.ship.rect.height
         available_space_y = (self.settings.screen_height - 
-                                (3 * alien_height) - ship_height)
+                                (5 * alien_height) - ship_height)
         number_rows = available_space_y // (2 * alien_height)
 
         # create a full fleet of aliens
@@ -197,7 +199,7 @@ class AlienInvasion:
         alien_width, alien_height = alien.rect.size
         alien.x = alien_width + 2 * alien_width * alien_number
         alien.rect.x = alien.x
-        alien.rect.y = alien_height + 2 * alien.rect.height * row_number
+        alien.rect.y = 2 * alien_height + 2 * alien.rect.height * row_number
         self.aliens.add(alien)
 
     def _check_fleet_edges(self):
@@ -225,16 +227,21 @@ class AlienInvasion:
         """Update images on screen and flip to the new screen."""
         #fill our background with our bg_color
         self.screen.fill(self.settings.bg_color)
+
+        # draw scoreboard to screen
+        self.sb.show_score()
+
         #draw ship to screen
         self.ship.blitme()
 
         for bullet in self.bullets.sprites():
             bullet.draw_bullet()
 
+
+
         self.aliens.draw(self.screen)
 
-        # draw scoreboard to screen
-        self.sb.show_score()
+
 
         # draw play button if game is inactive
         if not self.stats.game_active:
