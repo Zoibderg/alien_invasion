@@ -1,3 +1,5 @@
+import json
+
 class GameStats:
     """trak stats for alien invasion"""
 
@@ -6,7 +8,8 @@ class GameStats:
         self.reset_stats()
         self.game_active = False
 
-        self.high_score = 0
+        with open('high_score.json') as hs:
+            self.high_score = json.load(hs)
 
     def reset_stats(self):
         """stats that can change during gameplay"""

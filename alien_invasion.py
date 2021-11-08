@@ -1,4 +1,4 @@
-import sys, pygame
+import sys, pygame, json
 
 from time import sleep
 
@@ -58,6 +58,9 @@ class AlienInvasion:
         for event in pygame.event.get():
             #if player preses close, quit game
             if event.type == pygame.QUIT:
+                high_score = 'high_score.json'
+                with open(high_score, 'w') as hs:
+                    json.dump(self.stats.high_score, hs)
                 sys.exit()
             # if event is a key press
             elif event.type == pygame.KEYDOWN:
@@ -94,6 +97,9 @@ class AlienInvasion:
         elif event.key == pygame.K_LEFT:
             self.ship.moving_left = True
         elif event.key == pygame.K_ESCAPE:
+            high_score = 'high_score.json'
+            with open(high_score, 'w') as hs:
+                json.dump(self.stats.high_score, hs)
             sys.exit()
         elif event.key == pygame.K_SPACE:
             self._fire_bullet()
