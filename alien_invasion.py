@@ -1,6 +1,7 @@
 import sys, pygame, json, random
 
 from time import sleep
+from random import choice
 
 from settings import Settings
 from game_stats import GameStats
@@ -10,6 +11,7 @@ from ship import Ship
 from bullet import Bullet
 from bombs import Bomb
 from alien import Alien
+from continue_button import ContinueButton
 
 class AlienInvasion:
     """Overall class to manage game assets and behavior."""
@@ -30,7 +32,7 @@ class AlienInvasion:
         self.ship = Ship(self)
 
         self.bullets = pygame.sprite.Group()
-        self.bombs = pygame.sprite.Group()
+        self.alien_bombs = pygame.sprite.Group()
 
         self.aliens = pygame.sprite.Group()
         self._create_fleet()
@@ -39,6 +41,7 @@ class AlienInvasion:
         self.bg_color = (230, 230, 230)
         
         self.play_button = Button(self, "Play")
+        self.continue_button = ContinueButton(self, "Ship hit! Press SPACE to continue")
 
     def run_game(self):
         """Start main loop for our game."""
@@ -46,10 +49,9 @@ class AlienInvasion:
             self._check_events()
 
             if self.stats.game_active:
-                self._level_check()
                 self.ship.update()
                 self._update_bullets()
-                self._update_bombs()
+                self._check_bomb_ship_collisions()
                 self._update_aliens()
                 
             self._update_screen()
@@ -64,6 +66,10 @@ class AlienInvasion:
                 with open(high_score, 'w') as hs:
                     json.dump(self.stats.high_score, hs)
                 sys.exit()
+
+            elif event.type == ALIENBOMB and self.stats.game_active and self.stats.level >= 5:
+                self._alien_shoot()
+
             # if event is a key press
             elif event.type == pygame.KEYDOWN:
                 self._check_keydown_events(event)
@@ -103,32 +109,17 @@ class AlienInvasion:
             with open(high_score, 'w') as hs:
                 json.dump(self.stats.high_score, hs)
             sys.exit()
-        elif event.key == pygame.K_SPACE:
+        elif event.key == pygame.K_SPACE and self.stats.game_active == True:
             self._fire_bullet()
+        elif event.key == pygame.K_SPACE and self.stats.game_active == False:
+            self.stats.game_active = True
+            pygame.mouse.set_visible(False)
 
     def _check_keyup_events(self, event):
         if event.key == pygame.K_RIGHT:
             self.ship.moving_right = False
         elif event.key == pygame.K_LEFT:
             self.ship.moving_left = False
-
-    def _drop_bombs(self):
-        """drop bombs from alien ships"""
-        new_bomb = Bomb(self)
-        random.choice(self.aliens.copy())
-        self.bombs.add(new_bomb)
-
-    def _update_bombs(self):
-        """update bombs positions and gets rid of old bombs"""
-        self.screen_rect = self.screen.get_rect()
-        self.bombs.update()
-        for bomb in self.bombs.copy():
-            if bomb.rect.bottom >= self.screen_rect.bottom:
-                self.bombs.remove(bomb)
-
-    def _level_check(self):
-        if self.stats.level >= 1:
-            self._drop_bombs()
 
     def _fire_bullet(self):
         """create a new bullet and add it to the bullets group"""
@@ -151,7 +142,7 @@ class AlienInvasion:
     def _check_bullet_alien_collisions(self):
         """respond to bullet-alien collisions"""
         collisions = pygame.sprite.groupcollide(
-            self.bullets, self.aliens, True, True
+            self.bullets, self.aliens, False, True
         )
 
         if collisions:
@@ -167,6 +158,15 @@ class AlienInvasion:
 
             self.stats.level += 1
             self.sb.prep_level()
+
+    def _check_bomb_ship_collisions(self):
+        """respond to the ship being hit by bombs"""
+        collisions = pygame.sprite.spritecollideany(
+            self.ship, self.alien_bombs
+        )
+
+        if collisions:
+            self._ship_hit()
 
     def _update_aliens(self):
         """update the position of the aliens"""
@@ -196,6 +196,9 @@ class AlienInvasion:
         
             # small pause for reset
             sleep(0.5)
+
+            self.stats.game_active = False
+            self.continue_button.draw_button()
         else:
             self.stats.game_active = False
             pygame.mouse.set_visible(True)
@@ -263,23 +266,37 @@ class AlienInvasion:
         for bullet in self.bullets.sprites():
             bullet.draw_bullet()
 
-
+        self.alien_bombs.update()
+        self.alien_bombs.draw(self.screen)
 
         self.aliens.draw(self.screen)
 
 
 
         # draw play button if game is inactive
-        if not self.stats.game_active:
+        if not self.stats.game_active and self.stats.level <= 1:
             self.play_button.draw_button()
+
+        elif not self.stats.game_active:
+            self.continue_button.draw_button()
 
         #Make the most recently drawn screen visible.
         #this clears our previous screen and updates it to a new one
         #this gives our programe smooth movemnt
         pygame.display.flip()
 
+    def _alien_shoot(self):
+        if self.aliens.sprites():
+            random_alien = choice(self.aliens.sprites())
+            bomb_sprite = Bomb(random_alien.rect.center, self.settings.bullet_speed)
+            self.alien_bombs.add(bomb_sprite)
+
 if __name__ == '__main__':
     #Make a game instance, and run the game
     ai = AlienInvasion()
+
+    ALIENBOMB = pygame.USEREVENT + 1
+    pygame.time.set_timer(ALIENBOMB, 800)
+
     ai.run_game()
 
