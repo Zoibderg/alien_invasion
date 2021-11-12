@@ -1,4 +1,4 @@
-import sys, pygame, json
+import sys, pygame, json, random
 
 from time import sleep
 
@@ -8,6 +8,7 @@ from scoreboard import Scoreboard
 from button import Button
 from ship import Ship
 from bullet import Bullet
+from bombs import Bomb
 from alien import Alien
 
 class AlienInvasion:
@@ -17,9 +18,7 @@ class AlienInvasion:
         """Initlize the game, and create game resources."""
         pygame.init()
         self.settings = Settings()
-        self.screen = pygame.display.set_mode((
-            self.settings.screen_width, self.settings.screen_height
-        ))
+        self.screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
         self.settings.screen_width = self.screen.get_rect().width
         self.settings.screen_height = self.screen.get_rect().height
 
@@ -31,6 +30,7 @@ class AlienInvasion:
         self.ship = Ship(self)
 
         self.bullets = pygame.sprite.Group()
+        self.bombs = pygame.sprite.Group()
 
         self.aliens = pygame.sprite.Group()
         self._create_fleet()
@@ -46,8 +46,10 @@ class AlienInvasion:
             self._check_events()
 
             if self.stats.game_active:
+                self._level_check()
                 self.ship.update()
                 self._update_bullets()
+                self._update_bombs()
                 self._update_aliens()
                 
             self._update_screen()
@@ -110,6 +112,24 @@ class AlienInvasion:
         elif event.key == pygame.K_LEFT:
             self.ship.moving_left = False
 
+    def _drop_bombs(self):
+        """drop bombs from alien ships"""
+        new_bomb = Bomb(self)
+        random.choice(self.aliens.copy())
+        self.bombs.add(new_bomb)
+
+    def _update_bombs(self):
+        """update bombs positions and gets rid of old bombs"""
+        self.screen_rect = self.screen.get_rect()
+        self.bombs.update()
+        for bomb in self.bombs.copy():
+            if bomb.rect.bottom >= self.screen_rect.bottom:
+                self.bombs.remove(bomb)
+
+    def _level_check(self):
+        if self.stats.level >= 1:
+            self._drop_bombs()
+
     def _fire_bullet(self):
         """create a new bullet and add it to the bullets group"""
         if len(self.bullets) < self.settings.bullets_allowed:
@@ -131,7 +151,7 @@ class AlienInvasion:
     def _check_bullet_alien_collisions(self):
         """respond to bullet-alien collisions"""
         collisions = pygame.sprite.groupcollide(
-            self.bullets, self.aliens, False, True
+            self.bullets, self.aliens, True, True
         )
 
         if collisions:

@@ -1,3 +1,5 @@
+import pygame
+
 class Settings:
     """A class to store our settings for Alien Invasion game."""
 
@@ -19,6 +21,7 @@ class Settings:
 
         # alien settings
         self.fleet_drop_speed = 10
+
 
         # how quickly the game speeds up
         self.speedup_scale = 1.1
