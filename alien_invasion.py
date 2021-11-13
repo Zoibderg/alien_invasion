@@ -20,6 +20,7 @@ class AlienInvasion:
         """Initlize the game, and create game resources."""
         pygame.init()
         self.settings = Settings()
+
         self.screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
         self.settings.screen_width = self.screen.get_rect().width
         self.settings.screen_height = self.screen.get_rect().height
@@ -31,18 +32,9 @@ class AlienInvasion:
 
         self.ship = Ship(self)
 
-        self.bullets = pygame.sprite.Group()
-        self.alien_bombs = pygame.sprite.Group()
-
-        self.aliens = pygame.sprite.Group()
+        self._create_groups()
         self._create_fleet()
-
-        #Set our background color
-        self.bg_color = (230, 230, 230)
-        
-        self.play_button = PlayButton(self, "Play")
-        self.game_over_button = EndButton(self, "Game Over, Click here to continue.")
-        self.continue_button = ContinueButton(self, "Ship hit! Press SPACE to continue")
+        self._create_buttons()
 
     def run_game(self):
         """Start main loop for our game."""
@@ -56,6 +48,16 @@ class AlienInvasion:
                 self._update_aliens()
                 
             self._update_screen()
+
+    def _create_buttons(self):
+        self.play_button = PlayButton(self, "Play")
+        self.game_over_button = EndButton(self, "Game Over, Click here to continue.")
+        self.continue_button = ContinueButton(self, "Ship hit! Press SPACE to continue")
+
+    def _create_groups(self):
+        self.bullets = pygame.sprite.Group()
+        self.alien_bombs = pygame.sprite.Group()
+        self.aliens = pygame.sprite.Group()
 
     def _check_events(self):
         """Respond to kepresses and mouse events."""
