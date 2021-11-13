@@ -183,27 +183,30 @@ class AlienInvasion:
     def _ship_hit(self):
         """respond to the ship being hit by alien"""
         if self.stats.ships_left > 0:
-            # decrese ships left
-            self.stats.ships_left -= 1
-            self.sb.prep_ships()
-
-            # get rid of any remaining aliens and bullets
-            self.aliens.empty()
-            self.bullets.empty()
-
-            # create new fleet and recenter ship
-            self._create_fleet()
-            self.ship.center_ship()
-        
-            # small pause for reset
-            sleep(0.5)
-
-            self.stats.game_active = False
-            self.continue_button.draw_button()
+            self._cycle_level()
         else:
             self.stats.game_active = False
             self.stats.reset_stats()
             pygame.mouse.set_visible(True)
+
+    def _cycle_level(self):
+        # decrese ships left
+        self.stats.ships_left -= 1
+        self.sb.prep_ships()
+
+        # get rid of any remaining aliens and bullets
+        self.aliens.empty()
+        self.bullets.empty()
+
+        # create new fleet and recenter ship
+        self._create_fleet()
+        self.ship.center_ship()
+
+        # small pause for reset
+        sleep(0.5)
+
+        self.stats.game_active = False
+        self.continue_button.draw_button()
 
     def _create_fleet(self):
         """create our fleet of aliens"""
@@ -276,15 +279,16 @@ class AlienInvasion:
 
 
         # draw play button if game is inactive
-        if not self.stats.game_active and self.stats.level == 1:
-            self.play_button.draw_button()
+        if not self.stats.game_active:
+            if self.stats.level == 1:
+                self.play_button.draw_button()
 
-        elif not self.stats.game_active and not self.stats.ships_left:
-            self.game_over_button.draw_button()
-            pygame.mouse.set_visible(True)
+            elif not self.stats.ships_left:
+                self.game_over_button.draw_button()
+                pygame.mouse.set_visible(True)
 
-        elif not self.stats.game_active and self.stats.ships_left != 0:
-            self.continue_button.draw_button()
+            elif self.stats.ships_left != 0:
+                self.continue_button.draw_button()
 
         #Make the most recently drawn screen visible.
         #this clears our previous screen and updates it to a new one
