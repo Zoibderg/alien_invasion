@@ -1,17 +1,15 @@
-import sys, pygame, json, random
+import sys, pygame, json
 
 from time import sleep
 from random import choice
 
+from buttons import PlayButton, ContinueButton, EndButton
+from projectiles import Bullet, Bomb
+
 from settings import Settings
 from game_stats import GameStats
 from scoreboard import Scoreboard
-from button import Button
-from game_over_button import EndButton
-from continue_button import ContinueButton
 from ship import Ship
-from bullet import Bullet
-from bombs import Bomb
 from alien import Alien
 
 
@@ -42,7 +40,7 @@ class AlienInvasion:
         #Set our background color
         self.bg_color = (230, 230, 230)
         
-        self.play_button = Button(self, "Play")
+        self.play_button = PlayButton(self, "Play")
         self.game_over_button = EndButton(self, "Game Over, Click here to continue.")
         self.continue_button = ContinueButton(self, "Ship hit! Press SPACE to continue")
 
