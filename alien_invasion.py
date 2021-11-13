@@ -7,11 +7,13 @@ from settings import Settings
 from game_stats import GameStats
 from scoreboard import Scoreboard
 from button import Button
+from game_over_button import EndButton
+from continue_button import ContinueButton
 from ship import Ship
 from bullet import Bullet
 from bombs import Bomb
 from alien import Alien
-from continue_button import ContinueButton
+
 
 class AlienInvasion:
     """Overall class to manage game assets and behavior."""
@@ -41,6 +43,7 @@ class AlienInvasion:
         self.bg_color = (230, 230, 230)
         
         self.play_button = Button(self, "Play")
+        self.game_over_button = EndButton(self, "Game Over, Click here to continue.")
         self.continue_button = ContinueButton(self, "Ship hit! Press SPACE to continue")
 
     def run_game(self):
@@ -111,9 +114,9 @@ class AlienInvasion:
             sys.exit()
         elif event.key == pygame.K_SPACE and self.stats.game_active == True:
             self._fire_bullet()
-        elif event.key == pygame.K_SPACE and self.stats.game_active == False:
-            self.stats.game_active = True
-            pygame.mouse.set_visible(False)
+        elif event.key == pygame.K_SPACE and self.stats.game_active == False and self.stats.ships_left > 0:
+                self.stats.game_active = True
+                pygame.mouse.set_visible(False)
 
     def _check_keyup_events(self, event):
         if event.key == pygame.K_RIGHT:
@@ -142,7 +145,7 @@ class AlienInvasion:
     def _check_bullet_alien_collisions(self):
         """respond to bullet-alien collisions"""
         collisions = pygame.sprite.groupcollide(
-            self.bullets, self.aliens, False, True
+            self.bullets, self.aliens, True, True
         )
 
         if collisions:
@@ -201,6 +204,7 @@ class AlienInvasion:
             self.continue_button.draw_button()
         else:
             self.stats.game_active = False
+            self.stats.reset_stats()
             pygame.mouse.set_visible(True)
 
     def _create_fleet(self):
@@ -274,10 +278,14 @@ class AlienInvasion:
 
 
         # draw play button if game is inactive
-        if not self.stats.game_active and self.stats.level <= 1:
+        if not self.stats.game_active and self.stats.level == 1:
             self.play_button.draw_button()
 
-        elif not self.stats.game_active:
+        elif not self.stats.game_active and not self.stats.ships_left:
+            self.game_over_button.draw_button()
+            pygame.mouse.set_visible(True)
+
+        elif not self.stats.game_active and self.stats.ships_left != 0:
             self.continue_button.draw_button()
 
         #Make the most recently drawn screen visible.

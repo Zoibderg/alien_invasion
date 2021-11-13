@@ -1,4 +1,4 @@
-import pygame, random
+import pygame
 from pygame.sprite import Sprite
 
 class Bomb(Sprite):
