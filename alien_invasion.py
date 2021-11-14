@@ -11,6 +11,7 @@ from game_stats import GameStats
 from scoreboard import Scoreboard
 from ship import Ship
 from alien import Alien
+from walls import Wall
 
 
 class AlienInvasion:
@@ -31,6 +32,8 @@ class AlienInvasion:
         self.sb = Scoreboard(self)
 
         self.ship = Ship(self)
+
+        self.walls = Wall(self)
 
         self._create_groups()
         self._create_fleet()
@@ -281,8 +284,6 @@ class AlienInvasion:
         self.alien_bombs.draw(self.screen)
 
         self.aliens.draw(self.screen)
-
-
 
         # draw play button if game is inactive
         if not self.stats.game_active:
