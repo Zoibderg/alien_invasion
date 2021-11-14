@@ -35,7 +35,7 @@ class Bomb(Sprite):
     def __init__(self, pos, bullet_speed):
         super().__init__()
         self.image = pygame.Surface((3, 15))
-        self.image.fill('black')
+        self.image.fill('white')
         self.rect = self.image.get_rect(center = pos)
         self.speed = bullet_speed
 

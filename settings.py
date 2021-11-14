@@ -6,15 +6,15 @@ class Settings:
         # screen settings
         self.screen_width = 1600
         self.screen_height = 900
-        self.bg_color = (230, 230, 230)
+        self.bg_color = (0, 0, 0)
 
         # ship settings
         self.ship_limit = 3
 
         # bullet settings
-        self.bullet_width = 3000
+        self.bullet_width = 3
         self.bullet_height = 15
-        self.bullet_color = (60, 60, 60)
+        self.bullet_color = (255, 255, 255)
         self.bullets_allowed = 3
 
         # alien settings

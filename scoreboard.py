@@ -1,6 +1,7 @@
 import pygame.font
 
 from pygame.sprite import Group
+from health import Health
 from ship import Ship
 
 class Scoreboard:
@@ -14,7 +15,7 @@ class Scoreboard:
         self.stats = ai_game.stats
 
         # font settings for scoreboard
-        self.text_color = (0, 0, 0)
+        self.text_color = (255, 255, 255)
         self.font = pygame.font.Font('fonts/font.ttf', 20)
 
         self.prep_score()
@@ -61,7 +62,7 @@ class Scoreboard:
         """show how many ships are left"""
         self.ships = Group()
         for ship_number in range(self.stats.ships_left):
-            ship = Ship(self.ai_game)
+            ship = Health(self.ai_game)
             ship.rect.x = 10 + ship_number * ship.rect.width
             ship.rect.y = 10
             self.ships.add(ship)
