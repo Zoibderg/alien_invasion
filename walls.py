@@ -14,8 +14,15 @@ class Wall:
         self.wall_color = (255, 255, 255)
 
         #build and place wall
-        self.rect = pygame.Rect(0, 0, self.width, self.height)
-        self.rect.midbottom = self.screen_rect.midbottom
+        self.rect = pygame.Rect(0, 900, self.width, self.height)
+        #self.rect.midbottom = self.screen_rect.midbottom
+
+        self.x = float(self.rect.x)
 
     def draw_wall(self):
         self.screen.fill(self.wall_color, self.rect)
+
+    def update(self, direction):
+        """move wall to left or right"""
+        self.x += direction
+        self.rect.x = self.x

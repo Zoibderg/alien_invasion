@@ -34,6 +34,7 @@ class AlienInvasion:
         self.ship = Ship(self)
 
         self.walls = Wall(self)
+        self.wall_direction = 0.5
 
         self._create_groups()
         self._create_fleet()
@@ -285,6 +286,11 @@ class AlienInvasion:
 
         self.aliens.draw(self.screen)
 
+        if self.stats.game_active and self.stats.level >= 10:
+            self.walls.draw_wall()
+            self.walls.update(self.wall_direction)
+            self.check_wall_edges()
+
         # draw play button if game is inactive
         if not self.stats.game_active:
             if self.stats.level == 1:
@@ -301,6 +307,13 @@ class AlienInvasion:
         #this clears our previous screen and updates it to a new one
         #this gives our programe smooth movemnt
         pygame.display.flip()
+
+    def check_wall_edges(self):
+        if self.walls.rect.right >= self.settings.screen_width:
+            self.wall_direction = -0.5
+        elif self.walls.rect.left <= 0:
+            self.wall_direction = 0.5
+
 
     def _alien_shoot(self):
         if self.aliens.sprites():
