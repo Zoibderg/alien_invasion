@@ -15,7 +15,7 @@ class Scoreboard:
 
         # font settings for scoreboard
         self.text_color = (0, 0, 0)
-        self.font = pygame.font.SysFont(None, 48)
+        self.font = pygame.font.Font('fonts/font.ttf', 20)
 
         self.prep_score()
         self.prep_high_score()
@@ -25,7 +25,7 @@ class Scoreboard:
     def prep_score(self):
         """turn score into image"""
         rounded_score = round(self.stats.score, -1)
-        score_str = "{:,}".format(rounded_score)
+        score_str = "Score: {:,}".format(rounded_score)
         self.score_image = self.font.render(score_str, True,
             self.text_color, self.settings.bg_color)
 
@@ -37,7 +37,7 @@ class Scoreboard:
     def prep_high_score(self):
         """turn high score into image"""
         high_score = round(self.stats.high_score, -1)
-        high_score_str = "{:,}".format(high_score)
+        high_score_str = "High Score: {:,}".format(high_score)
         self.high_score_image = self.font.render(high_score_str, True,
             self.text_color, self.settings.bg_color)
 
@@ -48,7 +48,8 @@ class Scoreboard:
 
     def prep_level(self):
         """turn level into image"""
-        level_str = str(self.stats.level)
+        game_level = str(self.stats.level)
+        level_str = (f"Level: {game_level}")
         self.level_image = self.font.render(level_str, True,
             self.text_color, self.settings.bg_color)
 

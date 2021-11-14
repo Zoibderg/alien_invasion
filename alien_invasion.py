@@ -49,6 +49,7 @@ class AlienInvasion:
                 
             self._update_screen()
 
+
     def _create_buttons(self):
         self.play_button = PlayButton(self, "Play")
         self.game_over_button = EndButton(self, "Game Over, Click here to continue.")
@@ -58,6 +59,7 @@ class AlienInvasion:
         self.bullets = pygame.sprite.Group()
         self.alien_bombs = pygame.sprite.Group()
         self.aliens = pygame.sprite.Group()
+
 
     def _check_events(self):
         """Respond to kepresses and mouse events."""
@@ -124,6 +126,7 @@ class AlienInvasion:
         elif event.key == pygame.K_LEFT:
             self.ship.moving_left = False
 
+
     def _fire_bullet(self):
         """create a new bullet and add it to the bullets group"""
         if len(self.bullets) < self.settings.bullets_allowed:
@@ -170,6 +173,7 @@ class AlienInvasion:
 
         if collisions:
             self._ship_hit()
+
 
     def _update_aliens(self):
         """update the position of the aliens"""

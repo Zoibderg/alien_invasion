@@ -7,10 +7,10 @@ class PlayButton:
         self.screen_rect = self.screen.get_rect()
 
         # demensions and properties of button
-        self.width, self.height = 100, 50
+        self.width, self.height = 150, 50
         self.button_color = (0, 0, 0)
         self.text_color = (255, 255, 255)
-        self.font = pygame.font.SysFont(None, 48)
+        self.font = pygame.font.Font('fonts/font.ttf', 20)
 
         # build button rect and center it
         self.rect = pygame.Rect(0, 0, self.width, self.height)
@@ -40,7 +40,7 @@ class ContinueButton:
         self.width, self.height = 700, 50
         self.button_color = (0, 0, 0)
         self.text_color = (255, 255, 255)
-        self.font = pygame.font.SysFont(None, 48)
+        self.font = pygame.font.Font('fonts/font.ttf', 20)
 
         # build button rect and center it
         self.rect = pygame.Rect(0, 0, self.width, self.height)
@@ -70,7 +70,7 @@ class EndButton:
         self.width, self.height = 700, 50
         self.button_color = (0, 0, 0)
         self.text_color = (255, 255, 255)
-        self.font = pygame.font.SysFont(None, 48)
+        self.font = pygame.font.Font('fonts/font.ttf', 20)
 
         # build button rect and center it
         self.rect = pygame.Rect(0, 0, self.width, self.height)
