@@ -34,7 +34,7 @@ class AlienInvasion:
         self.ship = Ship(self)
 
         self.walls = Wall(self)
-        self.wall_direction = 0.5
+        self.wall_direction = self.settings.wall_speed
 
         self._create_groups()
         self._create_fleet()
@@ -57,7 +57,7 @@ class AlienInvasion:
     def _create_buttons(self):
         self.play_button = PlayButton(self, "Play")
         self.game_over_button = EndButton(self, "Game Over, Click here to continue.")
-        self.continue_button = ContinueButton(self, "Ship hit! Press SPACE to continue")
+        self.continue_button = ContinueButton(self, "Ship hit! Press 'P' to continue")
 
     def _create_groups(self):
         self.bullets = pygame.sprite.Group()
@@ -76,7 +76,7 @@ class AlienInvasion:
                     json.dump(self.stats.high_score, hs)
                 sys.exit()
 
-            elif event.type == ALIENBOMB and self.stats.game_active and self.stats.level >= 5:
+            elif event.type == ALIENBOMB and self.stats.game_active and self.stats.level >= 3:
                 self._alien_shoot()
 
             # if event is a key press
@@ -120,7 +120,7 @@ class AlienInvasion:
             sys.exit()
         elif event.key == pygame.K_SPACE and self.stats.game_active == True:
             self._fire_bullet()
-        elif event.key == pygame.K_SPACE and self.stats.game_active == False and self.stats.ships_left > 0:
+        elif event.key == pygame.K_p and self.stats.game_active == False and self.stats.ships_left > 0:
                 self.stats.game_active = True
                 pygame.mouse.set_visible(False)
 
@@ -286,10 +286,11 @@ class AlienInvasion:
 
         self.aliens.draw(self.screen)
 
-        if self.stats.game_active and self.stats.level >= 10:
+        if self.stats.game_active and self.stats.level >= 5:
             self.walls.draw_wall()
             self.walls.update(self.wall_direction)
             self.check_wall_edges()
+            self._check_wall_collosions()
 
         # draw play button if game is inactive
         if not self.stats.game_active:
@@ -314,6 +315,21 @@ class AlienInvasion:
         elif self.walls.rect.left <= 0:
             self.wall_direction = 0.5
 
+    def _check_wall_collosions(self):
+        bullet_collosions = pygame.sprite.spritecollideany(
+            self.walls, self.bullets
+        ) 
+        bomb_collosions = pygame.sprite.spritecollideany(
+            self.walls, self.alien_bombs
+        )
+        for bullet in self.bullets.copy():
+            if bullet_collosions:
+                self.bullets.remove(bullet)
+
+        for bomb in self.alien_bombs.copy():
+            if bomb_collosions:
+                self.alien_bombs.remove(bomb)
+                
 
     def _alien_shoot(self):
         if self.aliens.sprites():
@@ -324,9 +340,10 @@ class AlienInvasion:
 if __name__ == '__main__':
     #Make a game instance, and run the game
     ai = AlienInvasion()
+    settings = Settings()
 
     ALIENBOMB = pygame.USEREVENT + 1
-    pygame.time.set_timer(ALIENBOMB, 800)
+    pygame.time.set_timer(ALIENBOMB, settings.alien_bomb_speed)
 
     ai.run_game()
 
