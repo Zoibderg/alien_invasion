@@ -10,12 +10,15 @@ class Settings:
 
         # ship settings
         self.ship_limit = 3
+        self.ship_power = 1
+        self.powerup_time = 5000
 
         # bullet settings
         self.bullet_width = 3
         self.bullet_height = 15
         self.bullet_color = (255, 51, 51)
         self.bullets_allowed = 3
+        self.upgraded_bullets_allowed = 6
 
         # alien settings
         self.fleet_drop_speed = 10

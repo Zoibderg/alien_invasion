@@ -1,3 +1,4 @@
+import random
 import sys, pygame, json
 
 from time import sleep
@@ -8,7 +9,8 @@ from projectiles import Bullet, Bomb
 
 from settings import Settings
 from game_stats import GameStats
-from scoreboard import Scoreboard
+from scoreboard import Scoreboard 
+from powerups import Pow
 from ship import Ship
 from alien import Alien
 from walls import Wall
@@ -63,6 +65,7 @@ class AlienInvasion:
         self.bullets = pygame.sprite.Group()
         self.alien_bombs = pygame.sprite.Group()
         self.aliens = pygame.sprite.Group()
+        self.powerups = pygame.sprite.Group()
 
 
     def _check_events(self):
@@ -133,10 +136,23 @@ class AlienInvasion:
 
     def _fire_bullet(self):
         """create a new bullet and add it to the bullets group"""
-        if len(self.bullets) < self.settings.bullets_allowed:
-            new_bullet = Bullet(self)
+        if len(self.bullets) <= self.settings.bullets_allowed and self.settings.ship_power == 1:
+            source = self.ship.rect.midtop
+            new_bullet = Bullet(self, source)
             # add is simpler than append, but is only avaliable in pygame
             self.bullets.add(new_bullet)
+
+        elif self.settings.ship_power >= 2 and len(self.bullets) <= self.settings.upgraded_bullets_allowed:
+            self._upgrade_bullets()
+
+    def _upgrade_bullets(self):
+        source1 = self.ship.rect.midleft
+        source2 = self.ship.rect.midright
+        source3 = self.ship.rect.midtop
+        new_bullet1 = Bullet(self, source1)
+        new_bullet2 = Bullet(self, source2)
+        new_bullet3 = Bullet(self, source3)
+        self.bullets.add(new_bullet1, new_bullet2, new_bullet3)
             
     def _update_bullets(self):
         """update bullets position and get rid of old bullets"""
@@ -161,7 +177,12 @@ class AlienInvasion:
             self.sb.prep_score()
             self.sb.check_high_score()
 
-        if not self.aliens:
+            if random.random() > 0.9:
+                pow = Pow(aliens[0].rect.center)
+                self.powerups.add(pow)
+   
+  
+        if not self.aliens: 
             self.bullets.empty()
             self._create_fleet()
             self.settings.increse_speed()
@@ -178,6 +199,19 @@ class AlienInvasion:
         if collisions:
             self._ship_hit()
 
+    def _check_pow_collisions(self):
+        collisions = pygame.sprite.spritecollide(
+            self.ship, self.powerups, True
+        )
+
+        for collosion in collisions:
+            if collosion.type == 'gun':
+                self.settings.ship_power += 1
+
+            if collosion.type == 'shield' and self.stats.ships_left < 3:
+                self.stats.ships_left += 1
+                self.sb.prep_ships()
+            
 
     def _update_aliens(self):
         """update the position of the aliens"""
@@ -286,12 +320,16 @@ class AlienInvasion:
 
         self.aliens.draw(self.screen)
 
+        self.powerups.draw(self.screen)
+        self.powerups.update() 
+        self._check_pow_collisions()
+
         if self.stats.game_active and self.stats.level >= 5:
             self.walls.draw_wall()
             self.walls.update(self.wall_direction)
             self.check_wall_edges()
             self._check_wall_collosions()
-
+ 
         # draw play button if game is inactive
         if not self.stats.game_active:
             if self.stats.level == 1:

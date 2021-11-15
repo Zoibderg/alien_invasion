@@ -1,5 +1,7 @@
+import random
 import pygame
 from pygame.sprite import Sprite
+from random import choice
 
 class Alien(Sprite):
     """A class to represent a sinlge alien in the fleet"""
@@ -11,15 +13,21 @@ class Alien(Sprite):
         self.settings = ai_game.settings
         self.screen_rect = ai_game.screen.get_rect()
 
+        alien_one = pygame.image.load('images/alien.bmp')
+        alien_two = pygame.image.load('images/alien2.bmp')
+        alien_three = pygame.image.load('images/alien3.bmp')
+
+        alien_list = [alien_one, alien_two, alien_three]
+
         # load alien image at set its rect
-        self.image = pygame.image.load('images/alien.bmp')
+        self.image = random.choice(alien_list)
         self.rect = self.image.get_rect()
 
         # start each new alien at the top left of the screen
         self.rect.x = self.rect.width
         self.rect.y = self.rect.height
 
-        # store aliens exact position (decimal)
+        # store aliens exact position
         self.x = float(self.rect.x)
 
     def check_edges(self):
