@@ -169,6 +169,9 @@ class AlienInvasion:
             for alien_bomb in self.alien_bombs:
                 if pygame.sprite.spritecollide(alien_bomb, self.blocks, True):
                     alien_bomb.kill()
+
+        for alien in self.aliens:
+            pygame.sprite.spritecollide(alien, self.blocks, True)
         
 
     def _fire_bullet(self):
