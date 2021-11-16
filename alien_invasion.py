@@ -1,5 +1,6 @@
 import random
 import sys, pygame, json
+import walls
 
 from time import sleep
 from random import choice
@@ -13,7 +14,6 @@ from scoreboard import Scoreboard
 from powerups import Pow
 from ship import Ship
 from alien import Alien
-from walls import Wall
 
 
 class AlienInvasion:
@@ -35,8 +35,10 @@ class AlienInvasion:
 
         self.ship = Ship(self)
 
-        self.walls = Wall(self)
-        self.wall_direction = self.settings.wall_speed
+        self._wall_setup()
+        self._create_multiple_walls(*self.wall_x_positions, 
+            x_start = self.settings.screen_width / 8, y_start = 850) 
+
 
         self._create_groups()
         self._create_fleet()
@@ -52,6 +54,7 @@ class AlienInvasion:
                 self._update_bullets()
                 self._check_bomb_ship_collisions()
                 self._update_aliens()
+                self._check_power_time()
                 
             self._update_screen()
 
@@ -133,6 +136,40 @@ class AlienInvasion:
         elif event.key == pygame.K_LEFT:
             self.ship.moving_left = False
 
+    def _wall_setup(self):
+        self.shape = walls.shape
+        self.block_size = 12
+        self.blocks = pygame.sprite.Group()
+        self.wall_amount = 3
+        self.wall_x_positions = [num * (self.settings.screen_width / self.wall_amount)
+             for num in range(self.wall_amount)]
+
+
+    def _create_wall(self, x_start, y_start, offset_x):
+        for row_index, row in enumerate(self.shape):
+            for col_index, col in enumerate(row):
+                if col == 'x':
+                    x = x_start + col_index * self.block_size + offset_x
+                    y = y_start + row_index * self.block_size
+                    block = walls.Wall(self.block_size, (255, 255, 255), 
+                    x, y)
+                    self.blocks.add(block)
+
+    def _create_multiple_walls(self, *offset, x_start, y_start):
+        for offset_x in offset:
+            self._create_wall(x_start, y_start, offset_x)
+
+    def _check_wall_collisions(self):
+        if self.bullets:
+            for bullet in self.bullets:
+                if pygame.sprite.spritecollide(bullet, self.blocks, True):
+                    bullet.kill()
+
+        if self.alien_bombs:
+            for alien_bomb in self.alien_bombs:
+                if pygame.sprite.spritecollide(alien_bomb, self.blocks, True):
+                    alien_bomb.kill()
+        
 
     def _fire_bullet(self):
         """create a new bullet and add it to the bullets group"""
@@ -177,7 +214,7 @@ class AlienInvasion:
             self.sb.prep_score()
             self.sb.check_high_score()
 
-            if random.random() > 0.9:
+            if random.random() > 0.95:
                 pow = Pow(aliens[0].rect.center)
                 self.powerups.add(pow)
    
@@ -207,11 +244,16 @@ class AlienInvasion:
         for collosion in collisions:
             if collosion.type == 'gun':
                 self.settings.ship_power += 1
+                self.powerup_time = pygame.time.get_ticks()
 
             if collosion.type == 'shield' and self.stats.ships_left < 3:
                 self.stats.ships_left += 1
                 self.sb.prep_ships()
             
+    def _check_power_time(self):
+        if self.settings.ship_power >= 2 and pygame.time.get_ticks() - self.powerup_time > self.settings.POWERUP_TIME_ALLOWED:
+            self.settings.ship_power -= 1
+            self.powerup_time = pygame.time.get_ticks()
 
     def _update_aliens(self):
         """update the position of the aliens"""
@@ -324,12 +366,9 @@ class AlienInvasion:
         self.powerups.update() 
         self._check_pow_collisions()
 
-        if self.stats.game_active and self.stats.level >= 5:
-            self.walls.draw_wall()
-            self.walls.update(self.wall_direction)
-            self.check_wall_edges()
-            self._check_wall_collosions()
- 
+        self.blocks.draw(self.screen)
+        self._check_wall_collisions()
+
         # draw play button if game is inactive
         if not self.stats.game_active:
             if self.stats.level == 1:
@@ -347,27 +386,6 @@ class AlienInvasion:
         #this gives our programe smooth movemnt
         pygame.display.flip()
 
-    def check_wall_edges(self):
-        if self.walls.rect.right >= self.settings.screen_width:
-            self.wall_direction = -0.5
-        elif self.walls.rect.left <= 0:
-            self.wall_direction = 0.5
-
-    def _check_wall_collosions(self):
-        bullet_collosions = pygame.sprite.spritecollideany(
-            self.walls, self.bullets
-        ) 
-        bomb_collosions = pygame.sprite.spritecollideany(
-            self.walls, self.alien_bombs
-        )
-        for bullet in self.bullets.copy():
-            if bullet_collosions:
-                self.bullets.remove(bullet)
-
-        for bomb in self.alien_bombs.copy():
-            if bomb_collosions:
-                self.alien_bombs.remove(bomb)
-                
 
     def _alien_shoot(self):
         if self.aliens.sprites():

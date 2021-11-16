@@ -1,3 +1,5 @@
+import pygame
+
 class Settings:
     """A class to store our settings for Alien Invasion game."""
 
@@ -11,7 +13,8 @@ class Settings:
         # ship settings
         self.ship_limit = 3
         self.ship_power = 1
-        self.powerup_time = 5000
+        self.powerup_time = pygame.time.get_ticks()
+        self.POWERUP_TIME_ALLOWED = 5000
 
         # bullet settings
         self.bullet_width = 3
@@ -19,6 +22,7 @@ class Settings:
         self.bullet_color = (255, 51, 51)
         self.bullets_allowed = 3
         self.upgraded_bullets_allowed = 6
+
 
         # alien settings
         self.fleet_drop_speed = 10
