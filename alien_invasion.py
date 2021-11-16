@@ -1,5 +1,7 @@
 import random
-import sys, pygame, json
+import sys
+import pygame
+import json
 import walls
 
 from time import sleep
@@ -10,7 +12,7 @@ from projectiles import Bullet, Bomb
 
 from settings import Settings
 from game_stats import GameStats
-from scoreboard import Scoreboard 
+from scoreboard import Scoreboard
 from powerups import Pow
 from ship import Ship
 from alien import Alien
@@ -36,9 +38,8 @@ class AlienInvasion:
         self.ship = Ship(self)
 
         self._wall_setup()
-        self._create_multiple_walls(*self.wall_x_positions, 
-            x_start = self.settings.screen_width / 8, y_start = 850) 
-
+        self._create_multiple_walls(*self.wall_x_positions,
+                                    x_start=self.settings.screen_width / 8, y_start=850)
 
         self._create_groups()
         self._create_fleet()
@@ -55,14 +56,15 @@ class AlienInvasion:
                 self._check_bomb_ship_collisions()
                 self._update_aliens()
                 self._check_power_time()
-                
-            self._update_screen()
 
+            self._update_screen()
 
     def _create_buttons(self):
         self.play_button = PlayButton(self, "Play")
-        self.game_over_button = EndButton(self, "Game Over, Click here to continue.")
-        self.continue_button = ContinueButton(self, "Ship hit! Press 'P' to continue")
+        self.game_over_button = EndButton(
+            self, "Game Over, Click here to continue.")
+        self.continue_button = ContinueButton(
+            self, "Ship hit! Press 'P' to continue")
 
     def _create_groups(self):
         self.bullets = pygame.sprite.Group()
@@ -70,12 +72,11 @@ class AlienInvasion:
         self.aliens = pygame.sprite.Group()
         self.powerups = pygame.sprite.Group()
 
-
     def _check_events(self):
         """Respond to kepresses and mouse events."""
-        #for each event in game capture that event
+        # for each event in game capture that event
         for event in pygame.event.get():
-            #if player preses close, quit game
+            # if player preses close, quit game
             if event.type == pygame.QUIT:
                 high_score = 'high_score.json'
                 with open(high_score, 'w') as hs:
@@ -127,8 +128,8 @@ class AlienInvasion:
         elif event.key == pygame.K_SPACE and self.stats.game_active == True:
             self._fire_bullet()
         elif event.key == pygame.K_p and self.stats.game_active == False and self.stats.ships_left > 0:
-                self.stats.game_active = True
-                pygame.mouse.set_visible(False)
+            self.stats.game_active = True
+            pygame.mouse.set_visible(False)
 
     def _check_keyup_events(self, event):
         if event.key == pygame.K_RIGHT:
@@ -142,8 +143,7 @@ class AlienInvasion:
         self.blocks = pygame.sprite.Group()
         self.wall_amount = 3
         self.wall_x_positions = [num * (self.settings.screen_width / self.wall_amount)
-             for num in range(self.wall_amount)]
-
+                                 for num in range(self.wall_amount)]
 
     def _create_wall(self, x_start, y_start, offset_x):
         for row_index, row in enumerate(self.shape):
@@ -151,8 +151,8 @@ class AlienInvasion:
                 if col == 'x':
                     x = x_start + col_index * self.block_size + offset_x
                     y = y_start + row_index * self.block_size
-                    block = walls.Wall(self.block_size, (255, 255, 255), 
-                    x, y)
+                    block = walls.Wall(self.block_size, (255, 255, 255),
+                                       x, y)
                     self.blocks.add(block)
 
     def _create_multiple_walls(self, *offset, x_start, y_start):
@@ -172,7 +172,6 @@ class AlienInvasion:
 
         for alien in self.aliens:
             pygame.sprite.spritecollide(alien, self.blocks, True)
-        
 
     def _fire_bullet(self):
         """create a new bullet and add it to the bullets group"""
@@ -193,10 +192,10 @@ class AlienInvasion:
         new_bullet2 = Bullet(self, source2)
         new_bullet3 = Bullet(self, source3)
         self.bullets.add(new_bullet1, new_bullet2, new_bullet3)
-            
+
     def _update_bullets(self):
         """update bullets position and get rid of old bullets"""
-        #update bullets position
+        # update bullets position
         self.bullets.update()
         # get rid of bullets that leave the window
         for bullet in self.bullets.copy():
@@ -204,7 +203,7 @@ class AlienInvasion:
                 self.bullets.remove(bullet)
 
         self._check_bullet_alien_collisions()
- 
+
     def _check_bullet_alien_collisions(self):
         """respond to bullet-alien collisions"""
         collisions = pygame.sprite.groupcollide(
@@ -220,9 +219,8 @@ class AlienInvasion:
             if random.random() > 0.95:
                 pow = Pow(aliens[0].rect.center)
                 self.powerups.add(pow)
-   
-  
-        if not self.aliens: 
+
+        if not self.aliens:
             self.bullets.empty()
             self._create_fleet()
             self.settings.increse_speed()
@@ -252,7 +250,7 @@ class AlienInvasion:
             if collosion.type == 'shield' and self.stats.ships_left < 3:
                 self.stats.ships_left += 1
                 self.sb.prep_ships()
-            
+
     def _check_power_time(self):
         if self.settings.ship_power >= 2 and pygame.time.get_ticks() - self.powerup_time > self.settings.POWERUP_TIME_ALLOWED:
             self.settings.ship_power -= 1
@@ -308,8 +306,8 @@ class AlienInvasion:
 
         # determine the number of rows that fit on the screen
         ship_height = self.ship.rect.height
-        available_space_y = (self.settings.screen_height - 
-                                (5 * alien_height) - ship_height)
+        available_space_y = (self.settings.screen_height -
+                             (5 * alien_height) - ship_height)
         number_rows = available_space_y // (2 * alien_height)
 
         # create a full fleet of aliens
@@ -348,13 +346,13 @@ class AlienInvasion:
 
     def _update_screen(self):
         """Update images on screen and flip to the new screen."""
-        #fill our background with our bg_color
+        # fill our background with our bg_color
         self.screen.fill(self.settings.bg_color)
 
         # draw scoreboard to screen
         self.sb.show_score()
 
-        #draw ship to screen
+        # draw ship to screen
         self.ship.blitme()
 
         for bullet in self.bullets.sprites():
@@ -366,7 +364,7 @@ class AlienInvasion:
         self.aliens.draw(self.screen)
 
         self.powerups.draw(self.screen)
-        self.powerups.update() 
+        self.powerups.update()
         self._check_pow_collisions()
 
         self.blocks.draw(self.screen)
@@ -384,20 +382,21 @@ class AlienInvasion:
             elif self.stats.ships_left != 0:
                 self.continue_button.draw_button()
 
-        #Make the most recently drawn screen visible.
-        #this clears our previous screen and updates it to a new one
-        #this gives our programe smooth movemnt
+        # Make the most recently drawn screen visible.
+        # this clears our previous screen and updates it to a new one
+        # this gives our programe smooth movemnt
         pygame.display.flip()
-
 
     def _alien_shoot(self):
         if self.aliens.sprites():
             random_alien = choice(self.aliens.sprites())
-            bomb_sprite = Bomb(random_alien.rect.center, self.settings.bullet_speed)
+            bomb_sprite = Bomb(random_alien.rect.center,
+                               self.settings.bullet_speed)
             self.alien_bombs.add(bomb_sprite)
 
+
 if __name__ == '__main__':
-    #Make a game instance, and run the game
+    # Make a game instance, and run the game
     ai = AlienInvasion()
     settings = Settings()
 
@@ -405,4 +404,3 @@ if __name__ == '__main__':
     pygame.time.set_timer(ALIENBOMB, settings.alien_bomb_speed)
 
     ai.run_game()
-
