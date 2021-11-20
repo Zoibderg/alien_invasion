@@ -2,6 +2,7 @@ import random
 import sys
 import pygame
 import json
+
 import walls
 
 from time import sleep
@@ -45,6 +46,7 @@ class AlienInvasion:
         self._create_fleet()
         self._create_buttons()
 
+
     def run_game(self):
         """Start main loop for our game."""
         while True:
@@ -55,7 +57,6 @@ class AlienInvasion:
                 self._update_bullets()
                 self._check_bomb_ship_collisions()
                 self._update_aliens()
-                self._check_power_time()
 
             self._update_screen()
 
@@ -216,7 +217,7 @@ class AlienInvasion:
             self.sb.prep_score()
             self.sb.check_high_score()
 
-            if random.random() > 0.95:
+            if random.random() > 0.1:
                 pow = Pow(aliens[0].rect.center)
                 self.powerups.add(pow)
 
@@ -243,18 +244,19 @@ class AlienInvasion:
         )
 
         for collosion in collisions:
-            if collosion.type == 'gun':
+            if collosion.type == 'gun' and self.settings.ship_power < self.settings.ship_power_max:
                 self.settings.ship_power += 1
-                self.powerup_time = pygame.time.get_ticks()
+                self.powerup_time = pygame.time.get_ticks() * self.settings.ship_power
+                self.settings.powerup_time = self.powerup_time
 
             if collosion.type == 'shield' and self.stats.ships_left < 3:
                 self.stats.ships_left += 1
                 self.sb.prep_ships()
 
     def _check_power_time(self):
-        if self.settings.ship_power >= 2 and pygame.time.get_ticks() - self.powerup_time > self.settings.POWERUP_TIME_ALLOWED:
+        if (self.settings.ship_power >= 2 and pygame.time.get_ticks() -
+                self.settings.powerup_time // self.settings.ship_power > self.settings.POWERUP_TIME_ALLOWED):
             self.settings.ship_power -= 1
-            self.powerup_time = pygame.time.get_ticks()
 
     def _update_aliens(self):
         """update the position of the aliens"""
@@ -350,7 +352,9 @@ class AlienInvasion:
         self.screen.fill(self.settings.bg_color)
 
         # draw scoreboard to screen
+        self.sb.prep_remaining_pow_time()
         self.sb.show_score()
+        self._check_power_time()
 
         # draw ship to screen
         self.ship.blitme()

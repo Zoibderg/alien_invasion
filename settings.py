@@ -13,8 +13,8 @@ class Settings:
         # ship settings
         self.ship_limit = 3
         self.ship_power = 1
-        self.powerup_time = pygame.time.get_ticks()
-        self.POWERUP_TIME_ALLOWED = 5000
+        self.ship_power_max = 5
+        self.POWERUP_TIME_ALLOWED = 10000
 
         # bullet settings
         self.bullet_width = 3
@@ -50,6 +50,8 @@ class Settings:
 
         # scoring
         self.alien_points = 50
+
+        self.powerup_time = 0
 
     def increse_speed(self):
         """increse speed settings"""

@@ -1,4 +1,4 @@
-import pygame.font
+import pygame
 
 from pygame.sprite import Group
 from health import EmptyHealth, Health
@@ -21,6 +21,7 @@ class Scoreboard:
         self.prep_score()
         self.prep_high_score()
         self.prep_level()
+        self.prep_remaining_pow_time()
         self.prep_empty_hearts()
         self.prep_ships()
 
@@ -47,6 +48,17 @@ class Scoreboard:
         self.high_score_rect = self.high_score_image.get_rect()
         self.high_score_rect.centerx = self.screen_rect.centerx
         self.high_score_rect.top = self.score_rect.top
+
+    def prep_remaining_pow_time(self):
+        """turn remainging pow time into an image"""
+        pow_time_left = self.settings.ship_power
+        pow_time_str = "{}".format(pow_time_left)
+        self.powtime_image = self.font.render(pow_time_str, True, 
+        self.text_color, self.settings.bg_color)
+
+        self.powtime_rect = self.powtime_image.get_rect()
+        self.powtime_rect.left = self.screen_rect.left + 275
+        self.powtime_rect.top = self.screen_rect.top + 30
 
     def prep_level(self):
         """turn level into image"""
@@ -87,5 +99,6 @@ class Scoreboard:
         self.screen.blit(self.score_image, self.score_rect)
         self.screen.blit(self.high_score_image, self.high_score_rect)
         self.screen.blit(self.level_image, self.level_rect)
+        self.screen.blit(self.powtime_image, self.powtime_rect)
         self.empty_hearts.draw(self.screen)
         self.ships.draw(self.screen)
