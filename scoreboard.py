@@ -4,6 +4,7 @@ from pygame.sprite import Group
 from health import EmptyHealth, Health
 from ship import Ship
 
+
 class Scoreboard:
     """a class to report score information"""
 
@@ -30,7 +31,7 @@ class Scoreboard:
         rounded_score = round(self.stats.score, -1)
         score_str = "Score: {:,}".format(rounded_score)
         self.score_image = self.font.render(score_str, True,
-            self.text_color, self.settings.bg_color)
+                                            self.text_color, self.settings.bg_color)
 
         # display score at top right of screen
         self.score_rect = self.score_image.get_rect()
@@ -42,7 +43,7 @@ class Scoreboard:
         high_score = round(self.stats.high_score, -1)
         high_score_str = "High Score: {:,}".format(high_score)
         self.high_score_image = self.font.render(high_score_str, True,
-            self.text_color, self.settings.bg_color)
+                                                 self.text_color, self.settings.bg_color)
 
         # center high score at top of screen
         self.high_score_rect = self.high_score_image.get_rect()
@@ -53,8 +54,8 @@ class Scoreboard:
         """turn remainging pow time into an image"""
         pow_time_left = self.settings.ship_power
         pow_time_str = "{}".format(pow_time_left)
-        self.powtime_image = self.font.render(pow_time_str, True, 
-        self.text_color, self.settings.bg_color)
+        self.powtime_image = self.font.render(pow_time_str, True,
+                                              self.text_color, self.settings.bg_color)
 
         self.powtime_rect = self.powtime_image.get_rect()
         self.powtime_rect.left = self.screen_rect.left + 275
@@ -65,7 +66,7 @@ class Scoreboard:
         game_level = str(self.stats.level)
         level_str = (f"Level: {game_level}")
         self.level_image = self.font.render(level_str, True,
-            self.text_color, self.settings.bg_color)
+                                            self.text_color, self.settings.bg_color)
 
         self.level_rect = self.level_image.get_rect()
         self.level_rect.right = self.score_rect.right

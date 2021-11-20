@@ -1,5 +1,6 @@
 import pygame.font
 
+
 class PlayButton:
 
     def __init__(self, ai_game, msg):
@@ -20,8 +21,8 @@ class PlayButton:
 
     def _prep_msg(self, msg):
         """turn messae into rendered image"""
-        self.msg_image = self.font.render(msg, True, self.text_color, 
-            self.button_color)
+        self.msg_image = self.font.render(msg, True, self.text_color,
+                                          self.button_color)
         self.msg_image_rect = self.msg_image.get_rect()
         self.msg_image_rect.center = self.rect.center
 
@@ -29,6 +30,7 @@ class PlayButton:
         # draw button than msg
         self.screen.fill(self.button_color, self.rect)
         self.screen.blit(self.msg_image, self.msg_image_rect)
+
 
 class ContinueButton:
 
@@ -50,8 +52,8 @@ class ContinueButton:
 
     def _prep_msg(self, msg):
         """turn messae into rendered image"""
-        self.msg_image = self.font.render(msg, True, self.text_color, 
-            self.button_color)
+        self.msg_image = self.font.render(msg, True, self.text_color,
+                                          self.button_color)
         self.msg_image_rect = self.msg_image.get_rect()
         self.msg_image_rect.center = self.rect.center
 
@@ -59,6 +61,7 @@ class ContinueButton:
         # draw button than msg
         self.screen.fill(self.button_color, self.rect)
         self.screen.blit(self.msg_image, self.msg_image_rect)
+
 
 class EndButton:
 
@@ -80,8 +83,8 @@ class EndButton:
 
     def _prep_msg(self, msg):
         """turn messae into rendered image"""
-        self.msg_image = self.font.render(msg, True, self.text_color, 
-            self.button_color)
+        self.msg_image = self.font.render(msg, True, self.text_color,
+                                          self.button_color)
         self.msg_image_rect = self.msg_image.get_rect()
         self.msg_image_rect.center = self.rect.center
 
@@ -89,4 +92,3 @@ class EndButton:
         # draw button than msg
         self.screen.fill(self.button_color, self.rect)
         self.screen.blit(self.msg_image, self.msg_image_rect)
-

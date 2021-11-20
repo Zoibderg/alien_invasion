@@ -4,6 +4,7 @@ import pygame
 from pygame.sprite import Sprite
 from settings import Settings
 
+
 class Pow(Sprite):
     def __init__(self, center):
         super().__init__()
@@ -20,5 +21,6 @@ class Pow(Sprite):
         if self.rect.top >= self.settings.screen_height + 200:
             self.kill()
 
+
 powerup_images = {'shield': pygame.image.load('images/shield.bmp')}
-powerup_images['gun'] = pygame.image.load ('images/gun.bmp')
+powerup_images['gun'] = pygame.image.load('images/gun.bmp')

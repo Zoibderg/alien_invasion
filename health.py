@@ -1,6 +1,7 @@
 import pygame
 from pygame.sprite import Sprite
 
+
 class Health(Sprite):
     """A class for our full hearts."""
 

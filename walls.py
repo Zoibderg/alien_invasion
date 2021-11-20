@@ -1,6 +1,7 @@
 import pygame
 from pygame.sprite import Sprite
 
+
 class Wall(Sprite):
     """A class to define our wall"""
 
@@ -8,13 +9,14 @@ class Wall(Sprite):
         super().__init__()
         self.image = pygame.Surface((size, size))
         self.image.fill(color)
-        self.rect =  self.image.get_rect(topleft = (x, y))
+        self.rect = self.image.get_rect(topleft=(x, y))
+
 
 shape = [
-'  xxxxxxx',
-' xxxxxxxxx',
-'xxxxxxxxxxx',
-'xxxxxxxxxxx',
-'xxxxxxxxxxx',
-'xxx     xxx',
-'xx       xx']
+    '  xxxxxxx',
+    ' xxxxxxxxx',
+    'xxxxxxxxxxx',
+    'xxxxxxxxxxx',
+    'xxxxxxxxxxx',
+    'xxx     xxx',
+    'xx       xx']

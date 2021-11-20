@@ -46,7 +46,6 @@ class AlienInvasion:
         self._create_fleet()
         self._create_buttons()
 
-
     def run_game(self):
         """Start main loop for our game."""
         while True:

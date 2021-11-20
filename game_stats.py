@@ -1,5 +1,6 @@
 import json
 
+
 class GameStats:
     """trak stats for alien invasion"""
 
