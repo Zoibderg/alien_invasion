@@ -14,11 +14,12 @@ class Alien(Sprite):
         self.settings = ai_game.settings
         self.screen_rect = ai_game.screen.get_rect()
 
-        alien_one = pygame.image.load('images/alien.bmp')
-        alien_two = pygame.image.load('images/alien2.bmp')
-        alien_three = pygame.image.load('images/alien3.bmp')
+        alien_one = pygame.image.load('images/alien.png').convert_alpha()
+        alien_two = pygame.image.load('images/alien2.png').convert_alpha()
+        alien_three = pygame.image.load('images/alien3.png').convert_alpha()
+        alien_four = pygame.image.load('images/alien4.png').convert_alpha()
 
-        alien_list = [alien_one, alien_two, alien_three]
+        alien_list = [alien_one, alien_two, alien_three, alien_four]
 
         # load alien image at set its rect
         self.image = random.choice(alien_list)
