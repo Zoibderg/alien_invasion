@@ -1,7 +1,7 @@
 import pygame
 
 from pygame.sprite import Group
-from health import EmptyHealth, Health
+from health import EmptyHealth, Health, UIlaser
 from ship import Ship
 
 
@@ -52,14 +52,21 @@ class Scoreboard:
 
     def prep_remaining_pow_time(self):
         """turn remainging pow time into an image"""
-        pow_time_left = self.settings.ship_power
-        pow_time_str = "{}".format(pow_time_left)
-        self.powtime_image = self.font.render(pow_time_str, True,
-                                              self.text_color, self.settings.bg_color)
+        self.UIlasers = Group()
+        if self.settings.ship_power == 1:
+            for laser_number in range(self.settings.ship_power):
+                laser = UIlaser(self.ai_game)
+                laser.rect.x = 10 + laser_number * laser.rect.width * 2
+                laser.rect.y = 80
+                self.UIlasers.add(laser)
+        else:
+            for laser_number in range(3):
+                laser = UIlaser(self.ai_game)
+                laser.rect.x = 10 + laser_number * laser.rect.width * 2
+                laser.rect.y = 80
+                self.UIlasers.add(laser)
 
-        self.powtime_rect = self.powtime_image.get_rect()
-        self.powtime_rect.left = self.screen_rect.left + 275
-        self.powtime_rect.top = self.screen_rect.top + 30
+
 
     def prep_level(self):
         """turn level into image"""
@@ -100,6 +107,6 @@ class Scoreboard:
         self.screen.blit(self.score_image, self.score_rect)
         self.screen.blit(self.high_score_image, self.high_score_rect)
         self.screen.blit(self.level_image, self.level_rect)
-        self.screen.blit(self.powtime_image, self.powtime_rect)
+        self.UIlasers.draw(self.screen)
         self.empty_hearts.draw(self.screen)
         self.ships.draw(self.screen)
