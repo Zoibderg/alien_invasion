@@ -1,7 +1,7 @@
 import pygame
 
 from pygame.sprite import Group
-from health import EmptyHealth, Health, UIlaser
+from ui_sprites import UIlaser, UIship, UInumeralX, UInumeral1, UInumeral2, UInumeral3
 from ship import Ship
 
 
@@ -23,7 +23,6 @@ class Scoreboard:
         self.prep_high_score()
         self.prep_level()
         self.prep_remaining_pow_time()
-        self.prep_empty_hearts()
         self.prep_ships()
 
     def prep_score(self):
@@ -56,14 +55,14 @@ class Scoreboard:
         if self.settings.ship_power == 1:
             for laser_number in range(self.settings.ship_power):
                 laser = UIlaser(self.ai_game)
-                laser.rect.x = 10 + laser_number * laser.rect.width * 2
-                laser.rect.y = 80
+                laser.rect.x = 110 + laser_number * laser.rect.width * 2
+                laser.rect.y = 5
                 self.UIlasers.add(laser)
         else:
             for laser_number in range(3):
                 laser = UIlaser(self.ai_game)
-                laser.rect.x = 10 + laser_number * laser.rect.width * 2
-                laser.rect.y = 80
+                laser.rect.x = 110 + laser_number * laser.rect.width * 2
+                laser.rect.y = 5
                 self.UIlasers.add(laser)
 
 
@@ -81,20 +80,38 @@ class Scoreboard:
 
     def prep_ships(self):
         """show how many ships are left"""
-        self.ships = Group()
-        for ship_number in range(self.stats.ships_left):
-            ship = Health(self.ai_game)
-            ship.rect.x = 10 + ship_number * ship.rect.width
+        self.UIships = Group()
+        for ship in range(1):
+            ship = UIship(self.ai_game)
+            ship.rect.x = 10
             ship.rect.y = 10
-            self.ships.add(ship)
+            self.UIships.add(ship)
 
-    def prep_empty_hearts(self):
-        self.empty_hearts = Group()
-        for ship_number in range(self.settings.ship_limit):
-            empty_heart = EmptyHealth(self.ai_game)
-            empty_heart.rect.x = 10 + ship_number * empty_heart.rect.width
-            empty_heart.rect.y = 10
-            self.empty_hearts.add(empty_heart)
+        self.numx = Group()
+        numx = UInumeralX(self.ai_game)
+        numx.rect.x = 10 * 5
+        numx.rect.y = 15
+        self.numx.add(numx)
+
+        self.shipnums = Group()
+
+        if self.stats.ships_left == 3:
+            three = UInumeral3(self.ai_game)
+            three.rect.x = 75
+            three.rect.y = 13
+            self.shipnums.add(three)
+
+        elif self.stats.ships_left == 2:
+            two = UInumeral2(self.ai_game)
+            two.rect.x = 75
+            two.rect.y = 13
+            self.shipnums.add(two)
+
+        else:
+            one = UInumeral1(self.ai_game)
+            one.rect.x = 75
+            one.rect.y = 13
+            self.shipnums.add(one)
 
     def check_high_score(self):
         """check for a new high score"""
@@ -107,6 +124,7 @@ class Scoreboard:
         self.screen.blit(self.score_image, self.score_rect)
         self.screen.blit(self.high_score_image, self.high_score_rect)
         self.screen.blit(self.level_image, self.level_rect)
+        self.UIships.draw(self.screen)
+        self.numx.draw(self.screen)
+        self.shipnums.draw(self.screen)
         self.UIlasers.draw(self.screen)
-        self.empty_hearts.draw(self.screen)
-        self.ships.draw(self.screen)

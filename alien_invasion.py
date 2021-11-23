@@ -1,3 +1,4 @@
+import os
 import random
 import sys
 import pygame
@@ -24,7 +25,9 @@ class AlienInvasion:
 
     def __init__(self):
         """Initlize the game, and create game resources."""
+        pygame.mixer.pre_init(22050, -16, 2, 1024)
         pygame.init()
+        pygame.mixer.init()
         self.settings = Settings()
 
         self.screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
@@ -175,14 +178,18 @@ class AlienInvasion:
 
     def _fire_bullet(self):
         """create a new bullet and add it to the bullets group"""
+        laser_sound = pygame.mixer.Sound('sounds/sfx_laser.ogg')
         if len(self.bullets) <= self.settings.bullets_allowed and self.settings.ship_power == 1:
             source = self.ship.rect.midtop
             new_bullet = Bullet(self, source)
             # add is simpler than append, but is only avaliable in pygame
+            pygame.mixer.Sound.play(laser_sound)
             self.bullets.add(new_bullet)
+
 
         elif self.settings.ship_power >= 2 and len(self.bullets) <= self.settings.upgraded_bullets_allowed:
             self._upgrade_bullets()
+            pygame.mixer.Sound.play(laser_sound)
 
     def _upgrade_bullets(self):
         source1 = self.ship.rect.midleft
@@ -205,6 +212,7 @@ class AlienInvasion:
         self._check_bullet_alien_collisions()
 
     def _check_bullet_alien_collisions(self):
+        invader_killed = pygame.mixer.Sound('sounds/invaderkilled.wav')
         """respond to bullet-alien collisions"""
         collisions = pygame.sprite.groupcollide(
             self.bullets, self.aliens, True, True
@@ -215,6 +223,7 @@ class AlienInvasion:
                 self.stats.score += self.settings.alien_points * len(aliens)
             self.sb.prep_score()
             self.sb.check_high_score()
+            pygame.mixer.Sound.play(invader_killed)
 
             if random.random() > 0.1:
                 pow = Pow(aliens[0].rect.center)
@@ -230,12 +239,14 @@ class AlienInvasion:
 
     def _check_bomb_ship_collisions(self):
         """respond to the ship being hit by bombs"""
+        player_explo = pygame.mixer.Sound('sounds/explosion.wav')
         collisions = pygame.sprite.spritecollideany(
             self.ship, self.alien_bombs
         )
 
         if collisions:
             self._ship_hit()
+            pygame.mixer.Sound.play(player_explo)
 
     def _check_pow_collisions(self):
         collisions = pygame.sprite.spritecollide(
