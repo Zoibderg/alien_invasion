@@ -2,8 +2,10 @@ import random
 import sys
 import pygame
 import json
+from ui_sprites import UIlaser
 
 import walls
+import pyganim
 
 from time import sleep
 from random import choice
@@ -37,6 +39,7 @@ class AlienInvasion:
 
         self.stats = GameStats(self)
         self.sb = Scoreboard(self)
+        self.uil = UIlaser(self)
 
         self.ship = Ship(self)
 
@@ -370,6 +373,7 @@ class AlienInvasion:
 
     def _update_screen(self):
         """Update images on screen and flip to the new screen."""
+        mainClock = pygame.time.Clock()
         # fill our background with our bg_color
         self.screen.fill(self.settings.bg_color)
 
@@ -408,10 +412,13 @@ class AlienInvasion:
             elif self.stats.ships_left != 0:
                 self.continue_button.draw_button()
 
-        # Make the most recently drawn screen visible.
-        # this clears our previous screen and updates it to a new one
-        # this gives our programe smooth movemnt
-        pygame.display.flip()
+        if self.settings.ship_power == 2:
+            ui_laser_flash.blit(self.screen, (110, 5))
+            ui_laser_flash.blit(self.screen, (110 + 1 * self.uil.rect.width * 2, 5))
+            ui_laser_flash.blit(self.screen, (110 + 2 * self.uil.rect.width * 2, 5))
+
+        pygame.display.update()
+        mainClock.tick(9999)
 
     def _alien_shoot(self):
         if self.aliens.sprites():
@@ -420,6 +427,10 @@ class AlienInvasion:
                                self.settings.bullet_speed)
             self.alien_bombs.add(bomb_sprite)
 
+
+ui_laser_flash = pyganim.PygAnimation([('images/ui_laser.png', 0.3),
+                                                ('images/ui_laser_flash.png', 0.3)])
+ui_laser_flash.play()
 
 if __name__ == '__main__':
     # Make a game instance, and run the game

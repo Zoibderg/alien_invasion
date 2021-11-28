@@ -3,7 +3,6 @@ import pygame
 from random import random
 from alien_invasion import AlienInvasion
 from settings import Settings
-from powerups import Pow
 
 
 class AIPlayer:

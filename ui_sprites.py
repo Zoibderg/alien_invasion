@@ -1,4 +1,5 @@
 import pygame
+import pyganim
 from pygame.sprite import Sprite
 
 class UIlaser(Sprite):
@@ -14,6 +15,18 @@ class UIlaser(Sprite):
 
     def blitme(self):
         self.screen.blit(self.image, self.rect)
+
+class UIlaserFlash(Sprite):
+    def __init__(self, ai_game):
+        super().__init__()
+        self.screen = ai_game.screen
+        self.settings = ai_game.settings
+        self.screen_rect = ai_game.screen.get_rect()
+
+        laser_flash = pyganim.PygAnimation([('images/ui_laser.png', 0.3),
+                                            ('images/ui_laser_flash.png', 0.3)])
+
+        laser_flash.play()
 
         
 class UIship(Sprite):

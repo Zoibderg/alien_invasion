@@ -1,7 +1,8 @@
 import pygame
 
 from pygame.sprite import Group
-from ui_sprites import UIlaser, UIship, UInumeralX, UInumeral1, UInumeral2, UInumeral3
+import pyganim
+from ui_sprites import UIlaser, UIlaserFlash, UIship, UInumeralX, UInumeral1, UInumeral2, UInumeral3
 from ship import Ship
 
 
@@ -58,12 +59,14 @@ class Scoreboard:
                 laser.rect.x = 110 + laser_number * laser.rect.width * 2
                 laser.rect.y = 5
                 self.UIlasers.add(laser)
+
         else:
             for laser_number in range(3):
                 laser = UIlaser(self.ai_game)
                 laser.rect.x = 110 + laser_number * laser.rect.width * 2
                 laser.rect.y = 5
                 self.UIlasers.add(laser)
+
 
 
 
@@ -126,5 +129,5 @@ class Scoreboard:
         self.screen.blit(self.level_image, self.level_rect)
         self.UIships.draw(self.screen)
         self.numx.draw(self.screen)
-        self.shipnums.draw(self.screen)
+        self.shipnums.draw(self.screen)      
         self.UIlasers.draw(self.screen)
