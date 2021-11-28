@@ -1,4 +1,3 @@
-import os
 import random
 import sys
 import pygame
@@ -79,6 +78,11 @@ class AlienInvasion:
         """Respond to kepresses and mouse events."""
         # for each event in game capture that event
         for event in pygame.event.get():
+
+            ALIENBOMB = pygame.USEREVENT + 1
+            pygame.time.set_timer(ALIENBOMB, self.settings.alien_bomb_speed)
+            ABTimer = ALIENBOMB
+
             # if player preses close, quit game
             if event.type == pygame.QUIT:
                 high_score = 'high_score.json'
@@ -86,7 +90,7 @@ class AlienInvasion:
                     json.dump(self.stats.high_score, hs)
                 sys.exit()
 
-            elif event.type == ALIENBOMB and self.stats.game_active and self.stats.level >= 3:
+            elif event.type == ABTimer and self.stats.game_active and self.stats.level >= 3:
                 self._alien_shoot()
 
             # if event is a key press
@@ -211,8 +215,16 @@ class AlienInvasion:
 
         self._check_bullet_alien_collisions()
 
+    def _update_bombs(self):
+        self.alien_bombs.update()
+
+        for bomb in self.alien_bombs.copy():
+            if bomb.rect.bottom >= self.settings.screen_height:
+                self.alien_bombs.remove(bomb)
+
     def _check_bullet_alien_collisions(self):
         invader_killed = pygame.mixer.Sound('sounds/invaderkilled.wav')
+
         """respond to bullet-alien collisions"""
         collisions = pygame.sprite.groupcollide(
             self.bullets, self.aliens, True, True
@@ -225,7 +237,7 @@ class AlienInvasion:
             self.sb.check_high_score()
             pygame.mixer.Sound.play(invader_killed)
 
-            if random.random() > 0.1:
+            if random.random() > 0.95:
                 pow = Pow(aliens[0].rect.center)
                 self.powerups.add(pow)
 
@@ -372,7 +384,7 @@ class AlienInvasion:
         for bullet in self.bullets.sprites():
             bullet.draw_bullet()
 
-        self.alien_bombs.update()
+        self._update_bombs()
         self.alien_bombs.draw(self.screen)
 
         self.aliens.draw(self.screen)
@@ -413,8 +425,5 @@ if __name__ == '__main__':
     # Make a game instance, and run the game
     ai = AlienInvasion()
     settings = Settings()
-
-    ALIENBOMB = pygame.USEREVENT + 1
-    pygame.time.set_timer(ALIENBOMB, settings.alien_bomb_speed)
 
     ai.run_game()

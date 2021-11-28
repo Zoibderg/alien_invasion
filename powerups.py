@@ -13,7 +13,8 @@ class Pow(Sprite):
         self.image = powerup_images[self.type]
         self.rect = self.image.get_rect()
         self.rect.center = center
-        self.speedy = 1
+        # increased for testing
+        self.speedy = 5
 
     def update(self):
         self.settings = Settings()
