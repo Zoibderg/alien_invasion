@@ -26,7 +26,7 @@ class Settings:
 
         # alien settings
         self.fleet_drop_speed = 10
-        self.increse_bomb_rate = 75
+        self.increse_bomb_rate = 100
 
         # how quickly the game speeds up
         self.speedup_scale = 1.1
@@ -43,7 +43,7 @@ class Settings:
 
         self.alien_speed = 0.5
 
-        self.alien_bomb_speed = 999
+        self.alien_bomb_speed = 2000
         self.wall_speed = 0.5
 
         self.fleet_direction = 1

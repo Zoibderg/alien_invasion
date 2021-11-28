@@ -5,6 +5,7 @@ from alien_invasion import AlienInvasion
 from settings import Settings
 from powerups import Pow
 
+
 class AIPlayer:
 
     def __init__(self, ai_game):
@@ -57,7 +58,7 @@ class AIPlayer:
 
         if self.ai_game.alien_bombs.sprites():
             self._watch_bombs()
-            self._go_to_bomb()
+            self._dodge_bomb()
 
         # fire bullets half the time
         self._fire_bullets()
@@ -65,7 +66,7 @@ class AIPlayer:
     def _sweep_right_left(self):
         # sweep to the left and right
         ship = self.ai_game.ship
-        
+
         if not ship.moving_right and not ship.moving_left:
             # ship is not moving, move it to the right
             ship.moving_right = True
@@ -141,7 +142,7 @@ class AIPlayer:
 
         if target_pow.rect.y > still_grabable:
             pass
-        
+
         elif self.ai_game.ship.rect.x > target_pow.rect.x:
             self.ai_game.ship.moving_left = True
             self.ai_game.ship.moving_right = False
@@ -160,7 +161,7 @@ class AIPlayer:
         for bomb in self.ai_game.alien_bombs.sprites():
             if bomb.rect.y > target_bomb.rect.y:
                 target_bomb = bomb
-            
+
             elif bomb.rect.y < target_bomb.rect.y:
                 continue
 
@@ -169,23 +170,32 @@ class AIPlayer:
 
         return target_bomb
 
-    def _go_to_bomb(self):
-        if self.ai_game.stats.game_active:
+    def _dodge_bomb(self):
+        if not self.ai_game.stats.game_active:
 
-            target_bomb = self._watch_bombs()
+            return
+        target_bomb = self._watch_bombs()
 
-            if self.ai_game.ship.rect.x > target_bomb.rect.x:
-                self.ai_game.ship.moving_left = True
-                self.ai_game.ship.moving_right = False
-
-            elif self.ai_game.ship.rect.x < target_bomb.rect.x:
+        if (
+            self.ai_game.ship.rect.x <= self.screen_rect.width // 2
+            and target_bomb.rect.x <= self.screen_rect.width // 2
+        ):
+            if target_bomb.rect.x <= self.ai_game.ship.rect.x:
                 self.ai_game.ship.moving_left = False
                 self.ai_game.ship.moving_right = True
-
-            elif self.ai_game.ship.rect.x == target_bomb.rect.x:
-                self.ai_game.ship.moving_left = False
+            if target_bomb.rect.x >= self.ai_game.ship.rect.x:
+                self.ai_game.ship.moving_left = True
                 self.ai_game.ship.moving_right = False
-
+        if (
+            self.ai_game.ship.rect.x >= self.screen_rect.width // 2
+            and target_bomb.rect.x >= self.screen_rect.width // 2
+        ):
+            if target_bomb.rect.x <= self.ai_game.ship.rect.x:
+                self.ai_game.ship.moving_left = False
+                self.ai_game.ship.moving_right = True
+            if target_bomb.rect.x >= self.ai_game.ship.rect.x:
+                self.ai_game.ship.moving_left = True
+                self.ai_game.ship.moving_right = False
 
 
 if __name__ == '__main__':
