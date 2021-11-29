@@ -9,12 +9,14 @@ class Pow(Sprite):
     def __init__(self, center):
         super().__init__()
 
+        self.settings = Settings()
+
         self.type = random.choice(['shield', 'gun'])
         self.image = powerup_images[self.type]
         self.rect = self.image.get_rect()
         self.rect.center = center
         # increased for testing
-        self.speedy = 5
+        self.speedy = self.settings.pow_drop_speed
 
     def update(self):
         self.settings = Settings()

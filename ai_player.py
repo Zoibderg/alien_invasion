@@ -3,7 +3,7 @@ import pygame
 from random import random
 from alien_invasion import AlienInvasion
 from settings import Settings
-
+from powerups import Pow
 
 class AIPlayer:
 
@@ -89,6 +89,7 @@ class AIPlayer:
         self.ai_game.settings.ship_speed *= speed_factor
         self.ai_game.settings.bullet_speed *= speed_factor
         self.ai_game.settings.alien_speed *= speed_factor
+        self.ai_game.settings.pow_drop_speed *= speed_factor
 
     def _shoot_target_alien(self):
         """target a single alien"""
@@ -96,11 +97,11 @@ class AIPlayer:
 
         target_alien = self._get_target_alien()
 
-        if self.ai_game.ship.rect.x < target_alien.rect.x + 150:
+        if self.ai_game.ship.rect.left < target_alien.rect.right:
             self.ai_game.ship.moving_right = True
             self.ai_game.ship.moving_left = False
 
-        elif self.ai_game.ship.rect.x > target_alien.rect.x - 500:
+        elif self.ai_game.ship.rect.right > target_alien.rect.left:
             self.ai_game.ship.moving_right = False
             self.ai_game.ship.moving_left = True
 

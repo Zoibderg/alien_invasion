@@ -227,7 +227,6 @@ class AlienInvasion:
 
     def _check_bullet_alien_collisions(self):
         invader_killed = pygame.mixer.Sound('sounds/invaderkilled.wav')
-
         """respond to bullet-alien collisions"""
         collisions = pygame.sprite.groupcollide(
             self.bullets, self.aliens, True, True
@@ -245,12 +244,17 @@ class AlienInvasion:
                 self.powerups.add(pow)
 
         if not self.aliens:
-            self.bullets.empty()
-            self._create_fleet()
-            self.settings.increse_speed()
+            self._start_next_level()
 
-            self.stats.level += 1
-            self.sb.prep_level()
+
+    def _start_next_level(self):
+        self.bullets.empty()
+        self._create_fleet()
+        self.settings.increse_speed()
+
+        self.stats.level += 1
+        self.settings.level += 1
+        self.sb.prep_level()
 
     def _check_bomb_ship_collisions(self):
         """respond to the ship being hit by bombs"""
